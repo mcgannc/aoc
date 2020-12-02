@@ -4,7 +4,7 @@ import numpy as np
 TARGET = 2020
 
 
-def bruteForceSolution():
+def quadraticSolution():
     inputList = pd.read_csv("input.txt").to_numpy()
     for i in range(0, inputList.size):
         for j in range(0, inputList.size):
@@ -15,7 +15,7 @@ def bruteForceSolution():
                 print(result)
                 return
 
-    print("No joy")
+    print("No joy: Quadratic")
 
 
 def linearTimeSolution():
@@ -47,14 +47,15 @@ def linearTimeSolution():
     for candidate in candidateList:
         alternate = TARGET - candidate
         if numbersFound[alternate - 1] == 1:
-            result = (candidate, alternate, candidate * alternate)
+            result = (candidate, alternate, candidate + alternate,
+                      candidate * alternate)
             print(result)
             return
 
-    print("No joy")
+    print("No joy: Linear")
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    #bruteForceSolution()
+    quadraticSolution()
     linearTimeSolution()
