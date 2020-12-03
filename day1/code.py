@@ -2,26 +2,11 @@ import pandas as pd
 import numpy as np
 
 TARGET = 2020
+INPUT_FILE = "input.txt"
 
 
-def quadraticSolution():
-    inputList = pd.read_csv("input.txt").to_numpy()
-    for i in range(0, inputList.size):
-        for j in range(0, inputList.size):
-            a = inputList[i][0]
-            b = inputList[j][0]
-            if a + b == TARGET:
-                result = (a, b, a + b, a * b)
-                print(result)
-                return
-
-    print("No joy: Quadratic")
-
-
-def linearTimeSolution():
-    """Ignores integers outside range of [1, TARGET] """
-
-    inputList = pd.read_csv("input.txt").to_numpy()
+def prepareInput():
+    inputList = pd.read_csv(INPUT_FILE).to_numpy()
 
     numbersFound = np.arange(TARGET)
     candidateList = []
@@ -43,19 +28,40 @@ def linearTimeSolution():
         candidateList.append(candidate)
         numbersFound[candidate - 1] = 1
 
+    return candidateList, numbersFound
+
+
+def factorPair(candidateList, numbersFound, target):
     # Now process the candidateList, and check if the remainder was also recorded
     for candidate in candidateList:
-        alternate = TARGET - candidate
-        if numbersFound[alternate - 1] == 1:
-            result = (candidate, alternate, candidate + alternate,
-                      candidate * alternate)
-            print(result)
-            return
+        remainder = target - candidate
+        if remainder > 0 and numbersFound[remainder - 1] == 1:
+            return (candidate, remainder)
 
-    print("No joy: Linear")
+    return None
+
+
+def factorTriple(candidateList, numbersFound, target):
+    # Now process the candidateList, and check if the remainder was also recorded
+    for candidate in candidateList:
+        remainder = target - candidate
+        factoredPair = factorPair(candidateList, numbersFound, remainder)
+        if factoredPair:
+            return candidate, factoredPair[0], factoredPair[1]
+
+    return None
+
+
+def main():
+    candidateList, numbersFound = prepareInput()
+
+    a, b = factorPair(candidateList, numbersFound, TARGET)
+    print((a, b, a + b, a * b))
+
+    a, b, c = factorTriple(candidateList, numbersFound, TARGET)
+    print((a, b, c, a + b + c, a * b * c))
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    quadraticSolution()
-    linearTimeSolution()
+    main()
