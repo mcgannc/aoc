@@ -14,5 +14,21 @@ def loadData():
     return entries
 
 
+REQUIRED_FIELDS = {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}
+
+
+def isValid(passport):
+    for field in REQUIRED_FIELDS:
+        if field not in passport:
+            return False
+    return True
+
+
+def main():
+    passports = loadData()
+    validPassports = [passport for passport in passports if isValid(passport)]
+    return validPassports
+
+
 if __name__ == "__main__":
     main()
